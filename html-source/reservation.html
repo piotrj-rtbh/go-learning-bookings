@@ -21,6 +21,10 @@
     .room-image {
       max-width: 50%;
     }
+
+    .redText {
+      color: red;
+    }
   </style>
 </head>
 
@@ -75,7 +79,7 @@
       <div class="col-md-6">
         <h1 class="mt-5">Search for Availability</h1>
 
-        <form action="reservation.html" method="get">
+        <form action="reservation.html" method="get" novalidate class="needs-validation">
           <div class="form-row">
             <div class="col">
               <div class="form-group">
@@ -89,7 +93,8 @@
             <div class="col">
               <div class="form-group">
                 <label for="end_date">Ending date</label>
-                <input required type="date" class="form-control" id="end_date" name="end_date" aria-describedby="endDateHelp">
+                <input required type="date" class="form-control" id="end_date" name="end_date"
+                  aria-describedby="endDateHelp">
                 <small id="endDateHelp" class="form-text text-muted">Enter your ending date in the form of
                   YYYY-MM-DD</small>
               </div>
@@ -97,6 +102,15 @@
           </div>
           <button type="submit" class="btn btn-primary">Search Availability</button>
         </form>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <p id="myParagraph">This is some text</p>
+        <p>
+          <button class="btn btn-outline-secondary" id="colorButton">Click me</button>
+        </p>
       </div>
     </div>
   </div>
@@ -124,6 +138,39 @@
     integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
     crossorigin="anonymous"></script>
 
+  <script>
+    /* // let p = document.getElementById('myParagraph');
+    // p.classList.add('redText');
+
+    document.getElementById('colorButton').addEventListener("click", function () {
+      let p = document.getElementById('myParagraph');
+      if(p.classList.contains('redText')) {
+        p.classList.remove('redText');
+      } else {
+        p.classList.add('redText');
+      }
+      // or toggle: 
+      // p.classList.toggle('redText');
+    }); */
+
+    (function () {
+      'use strict';
+      window.addEventListener('load', function () {
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        let forms = document.getElementsByClassName('needs-validation');
+        // Loop over them and prevent submission
+        Array.prototype.filter.call(forms, function (form) {
+          form.addEventListener('submit', function (event) {
+            if (form.checkValidity() === false) {
+              event.preventDefault();
+              event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+          }, false);
+        });
+      }, false);
+    })();
+  </script>
 </body>
 
 </html>
