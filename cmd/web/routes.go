@@ -33,5 +33,10 @@ func routes(app *config.AppConfig) http.Handler {
 	// defining paths
 	mux.Get("/", handlers.Repo.Home)
 	mux.Get("/about", handlers.Repo.About)
+
+	// in order to enable images loading we have to run a file server
+	fileServer := http.FileServer(http.Dir("./static/"))
+	mux.Handle("/static/*", http.StripPrefix("/static", fileServer))
+
 	return mux
 }
