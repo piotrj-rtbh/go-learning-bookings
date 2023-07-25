@@ -24,6 +24,10 @@
       max-width: 50%;
     }
 
+    .search-form {
+      max-width: 95%;
+    }
+
     /* .notie-container {
       box-shadow: none;
     } */
@@ -265,24 +269,56 @@
         toast: toast,
         success: success,
         error: error,
+        custom: custom,
+      }
+    }
+
+    async function custom(c) {
+      // https://sweetalert2.github.io/#input-types preConfirm
+      const {
+        msg = "",
+        title = "",
+      } = c;
+
+      const { value: formValues } = await Swal.fire({
+        title: title,
+        html: msg,
+        backdrop: false,
+        focusConfirm: false,
+        showCancelButton: true,
+        preConfirm: () => {
+          return [
+            document.getElementById('start').value,
+            document.getElementById('end').value
+          ]
+        }
+      })
+
+      if (formValues) {
+        Swal.fire(JSON.stringify(formValues))
       }
     }
 
     document.getElementById('colorButton').addEventListener("click", function () {
-      // notify("This is my message", "warning")
-      // now we are using sweetalert2
-      // notifyModal("title", "<em>hello, world</em>", "success", "my text for the button");
-
-      // now we use js module :)
-      // attention.toast({
-      //   msg: "Hello, world",
-      //   icon: "error"
-      // });
-      // attention.success({
-      //   msg: "Hello, world",
-      // });
-      attention.error({
-        msg: "Ooops!",
+      let html = /*html*/`
+      <form id="check-availability-form" action="" method="post" novalidate class="needs-validation search-form">
+          <div class="form-row">
+            <div class="col">
+              <div class="form-row" id="reservation-dates-modal">
+                <div class="col">
+                  <input required class="form-control" type="text" name="start" id="start" placeholder="Arrival">
+                </div>
+                <div class="col">
+                  <input required class="form-control" type="text" name="end" id="end" placeholder="Departure">
+                </div>
+              </div>
+            </div>
+          </div>
+      </form>
+      `;
+      attention.custom({
+        msg: html,
+        title: "Choose your dates"
       });
     });
   </script>
