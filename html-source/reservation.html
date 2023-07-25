@@ -157,19 +157,7 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <script>
-    /* // let p = document.getElementById('myParagraph');
-    // p.classList.add('redText');
-
-    document.getElementById('colorButton').addEventListener("click", function () {
-      let p = document.getElementById('myParagraph');
-      if(p.classList.contains('redText')) {
-        p.classList.remove('redText');
-      } else {
-        p.classList.add('redText');
-      }
-      // or toggle: 
-      // p.classList.toggle('redText');
-    }); */
+    let attention = Prompt();
 
     (function () {
       'use strict';
@@ -214,10 +202,29 @@
         confirmButtonText: confirmationButtonText
       })
     }
+
+    function Prompt() {
+      let toast = function() {
+        console.log("clicked button and got toast")
+      }
+
+      let success = function() {
+        console.log("clicked button and got success")
+      }
+
+      return  {
+        toast: toast,
+        success: success,
+      }
+    }
+
     document.getElementById('colorButton').addEventListener("click", function () {
       // notify("This is my message", "warning")
       // now we are using sweetalert2
-      notifyModal("title", "<em>hello, world</em>", "success", "my text for the button");
+      // notifyModal("title", "<em>hello, world</em>", "success", "my text for the button");
+
+      // now we use js module :)
+      attention.success();
     });
   </script>
 </body>
