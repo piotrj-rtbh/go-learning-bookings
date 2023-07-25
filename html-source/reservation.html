@@ -204,17 +204,67 @@
     }
 
     function Prompt() {
-      let toast = function() {
-        console.log("clicked button and got toast")
+      let toast = function (c) {
+        // console.log("clicked button and got toast")
+        // let's grab toast from sweetalert: https://sweetalert2.github.io/#examples
+        const {
+          msg = "",
+          icon = "success",
+          position = "top-end"
+        } = c;
+
+        const Toast = Swal.mixin({
+          toast: true,
+          title: msg,
+          position: position,
+          icon: icon,
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+          }
+        });
+
+        Toast.fire({});
       }
 
-      let success = function() {
-        console.log("clicked button and got success")
+      let success = function (c) {
+        // console.log("clicked button and got success")
+
+        const {
+          msg = "",
+          title = "",
+          footer = "",
+        } = c;
+
+        Swal.fire({
+          icon: 'success',
+          title: title,
+          text: msg,
+          footer: footer,
+        })
+      }
+      let error = function (c) {
+        const {
+          msg = "",
+          title = "",
+          footer = "",
+        } = c;
+
+        Swal.fire({
+          icon: 'error',
+          title: title,
+          text: msg,
+          footer: footer,
+        })
       }
 
-      return  {
+      return {
         toast: toast,
         success: success,
+        error: error,
       }
     }
 
@@ -224,7 +274,16 @@
       // notifyModal("title", "<em>hello, world</em>", "success", "my text for the button");
 
       // now we use js module :)
-      attention.success();
+      // attention.toast({
+      //   msg: "Hello, world",
+      //   icon: "error"
+      // });
+      // attention.success({
+      //   msg: "Hello, world",
+      // });
+      attention.error({
+        msg: "Ooops!",
+      });
     });
   </script>
 </body>
