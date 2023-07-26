@@ -189,7 +189,7 @@
                 title = "",
             } = c;
 
-            const { value: formValues } = await Swal.fire({
+            const { value: result } = await Swal.fire({
                 title: title,
                 html: msg,
                 backdrop: false,
@@ -217,8 +217,22 @@
                 }
             })
 
-            if (formValues) {
-                Swal.fire(JSON.stringify(formValues))
+            // if we have the result
+            if (result) {
+                // and the result is not because they've clicked the cancel button on the window 
+                if (result.dismiss !== Swal.DismissReason.cancel) {
+                    // and the result is not empty
+                    if (result.value !== "") {
+                        // call the callback
+                        if(c.callback !== undefined) {
+                            c.callback(result);
+                        }
+                    } else {
+                        c.callback(false);
+                    }
+                } else {
+                    c.callback(false);
+                }
             }
         }
 
