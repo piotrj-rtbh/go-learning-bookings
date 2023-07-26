@@ -25,7 +25,7 @@ func routes(app *config.AppConfig) http.Handler {
 	// this middleware writes to console at every page hit
 	// mux.Use(WriteToConsole)
 
-	mux.Use(NoSurf)
+	mux.Use(NoSurf) // this will prevent POST requests without proper CSRF token
 
 	// use sessions using the middleware SessionLoad
 	mux.Use(SessionLoad)
@@ -36,6 +36,8 @@ func routes(app *config.AppConfig) http.Handler {
 	mux.Get("/generals-quarters", handlers.Repo.Generals)
 	mux.Get("/majors-suite", handlers.Repo.Majors)
 	mux.Get("/search-availability", handlers.Repo.Availability)
+	mux.Post("/search-availability", handlers.Repo.PostAvailability)
+	mux.Get("/search-availability-json", handlers.Repo.AvailabilityJSON)
 	mux.Get("/contact", handlers.Repo.Contact)
 
 	mux.Get("/make-reservation", handlers.Repo.Reservation)
