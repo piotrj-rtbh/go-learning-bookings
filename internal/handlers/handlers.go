@@ -61,9 +61,14 @@ func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
 
 // Reservation renders the make a reservation page and displays form
 func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
+	var emptyReservation models.Reservation
+	data := make(map[string]interface{})
+	data["reservation"] = emptyReservation
+
 	render.RenderTemplate(w, r, "make-reservation.page.tmpl", &models.TemplateData{
 		// for GET we make the Form object be empty
 		Form: forms.New(nil),
+		Data: data,
 	})
 }
 
@@ -85,7 +90,12 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	// now we have to check our data
 	form := forms.New(r.PostForm) // r.PostForm is accessible only after ParseForm has been called
 
-	form.Has("first_name", r) // adds errors if failed
+	//form.Has("first_name", r) // adds errors if failed
+	// instead we use our shiny new function form.Required
+	form.Required("first_name", "last_name", "email")
+	// and some more validators as well :)
+	form.MinLength("first_name", 3, r)
+
 	if !form.Valid() {
 		data := make(map[string]interface{}) // create empty data for TemplateData.Data
 		// store the reservation as it is so that we can repost those data back to the user
