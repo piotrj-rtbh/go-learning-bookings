@@ -195,19 +195,17 @@
                 backdrop: false,
                 focusConfirm: false,
                 showCancelButton: true,
+                // changing willOpen to a more general - the body will be sent as param
                 willOpen: () => {
-                    // we want to display pop-up calendar
-                    const elem = document.getElementById('reservation-dates-modal');
-                    const rp = new DateRangePicker(elem, {
-                        format: 'yyyy-mm-dd',
-                        showOnFocus: true
-                    })
+                    if (c.willOpen !== undefined) {
+                        c.willOpen();
+                    }
                 },
+                // same here
                 didOpen: () => {
-                    // we have to remove disabled properties
-                    // disabled were introduced so that the inputs don't have focus
-                    document.getElementById("start").removeAttribute("disabled");
-                    document.getElementById("end").removeAttribute("disabled");
+                    if (c.didOpen !== undefined) {
+                        c.didOpen();
+                    }
                 },
                 preConfirm: () => {
                     return [
@@ -224,7 +222,7 @@
                     // and the result is not empty
                     if (result.value !== "") {
                         // call the callback
-                        if(c.callback !== undefined) {
+                        if (c.callback !== undefined) {
                             c.callback(result);
                         }
                     } else {

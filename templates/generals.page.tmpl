@@ -58,10 +58,34 @@
     attention.custom({
       msg: html,
       title: "Choose your dates",
+      // cut from base.layout, it will be sent as param - thus we make layout sweetalert call independent
+      willOpen: () => {
+        // we want to display pop-up calendar
+        const elem = document.getElementById('reservation-dates-modal');
+        const rp = new DateRangePicker(elem, {
+          format: 'yyyy-mm-dd',
+          showOnFocus: true
+        })
+      },
+      didOpen: () => {
+        // we have to remove disabled properties
+        // disabled were introduced so that the inputs don't have focus
+        document.getElementById("start").removeAttribute("disabled");
+        document.getElementById("end").removeAttribute("disabled");
+      },
       callback: function (result) {
         console.log("called")
-        // perform JSON request
-        fetch('/search-availability-json')
+
+        const form = document.getElementById("check-availability-form");
+        const formData = new FormData(form); // create form data of this form
+        // we have to add the csrf_token here because it's not in the above form (we could add it there but there's another way)
+        formData.append("csrf_token", "{{.CSRFToken}}");
+
+        // perform JSON request with POST (we change the method in routes as well)
+        fetch('/search-availability-json', {
+          method: "post",
+          body: formData,
+        })
           .then(response => response.json())
           .then(data => {
             console.log(data)
