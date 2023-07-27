@@ -119,6 +119,17 @@
                 confirmButtonText: confirmationButtonText
             })
         }
+        // if there's a value in .Error then notify it right away
+        {{with .Error}}
+        notify("{{.}}", "error")
+        {{end}}
+        // similiarly with .Flash and .Warning
+        {{with .Flash}}
+        notify("{{.}}", "success")
+        {{end}}
+        {{with .Warning}}
+        notify("{{.}}", "warning")
+        {{end}}
 
         function Prompt() {
             let toast = function (c) {
