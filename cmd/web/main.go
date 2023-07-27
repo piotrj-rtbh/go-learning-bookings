@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/piotrj-rtbh/bookings/pkg/config"
-	"github.com/piotrj-rtbh/bookings/pkg/handlers"
-	"github.com/piotrj-rtbh/bookings/pkg/render"
+	"github.com/piotrj-rtbh/bookings/internal/config"
+	"github.com/piotrj-rtbh/bookings/internal/handlers"
+	"github.com/piotrj-rtbh/bookings/internal/render"
 
 	"github.com/alexedwards/scs/v2"
 )

@@ -3,8 +3,8 @@ package main
 import (
 	"net/http"
 
-	"github.com/piotrj-rtbh/bookings/pkg/config"
-	"github.com/piotrj-rtbh/bookings/pkg/handlers"
+	"github.com/piotrj-rtbh/bookings/internal/config"
+	"github.com/piotrj-rtbh/bookings/internal/handlers"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
