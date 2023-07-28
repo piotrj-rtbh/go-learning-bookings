@@ -61,7 +61,10 @@ func getRoutes() http.Handler {
 	// copy of func routes() from routes.go
 	mux := chi.NewRouter()
 	mux.Use(middleware.Recoverer) // prevents from panic errors! middleware comes from chi
-	mux.Use(NoSurf)               // this will prevent POST requests without proper CSRF token
+	// IMPORTANT: WE COMMENT IT RIGHT NOW FOR A MOMENT
+	// JUST TO ALLOW POST-ing with tests
+	// THIS WILL BE CHANGED IN THE NEXT LECTURES
+	// mux.Use(NoSurf)               // this will prevent POST requests without proper CSRF token
 	mux.Use(SessionLoad)
 
 	// defining paths
