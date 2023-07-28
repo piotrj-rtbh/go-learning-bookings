@@ -13,6 +13,8 @@ func TestNoSurf(t *testing.T) {
 
 	// when we call NoSurf it should receive http.Handler or something that satisfies the interface
 	// and should return something that is also http.Handler
+	// special syntax for switch here: https://go.dev/tour/methods/16
+	// here we test the type of v
 	switch v := h.(type) {
 	case http.Handler:
 		// do nothing
