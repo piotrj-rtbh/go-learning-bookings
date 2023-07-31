@@ -41,3 +41,20 @@ func TestMain(m *testing.M) {
 
 	os.Exit(m.Run())
 }
+
+// let's create a test ResponseWriter which satisfies the original ResponseWriter interface (look at the description of Response Writer)
+type myWriter struct{}
+
+func (tw *myWriter) Header() http.Header {
+	var h http.Header
+	return h
+}
+
+func (tw *myWriter) WriteHeader(i int) {
+
+}
+
+func (tw *myWriter) Write(b []byte) (int, error) {
+	length := len(b)
+	return length, nil
+}
