@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/piotrj-rtbh/bookings/internal/config"
 	"github.com/piotrj-rtbh/bookings/internal/handlers"
+	"github.com/piotrj-rtbh/bookings/internal/helpers"
 	"github.com/piotrj-rtbh/bookings/internal/models"
 	"github.com/piotrj-rtbh/bookings/internal/render"
 
@@ -19,6 +21,8 @@ const portNumber = "localhost:8080"
 
 var app config.AppConfig        // have to define here not in main() because middleware.go uses app.InProduction !
 var session *scs.SessionManager // have to define global bc config.go will also use sessions!
+var infoLog *log.Logger
+var errorLog *log.Logger
 
 // main is the main function
 func main() {
@@ -46,6 +50,12 @@ func run() error {
 	// change this to true when in production
 	app.InProduction = false
 
+	infoLog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	app.InfoLog = infoLog
+
+	errorLog = log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+	app.ErrorLog = errorLog
+
 	// create a session using scs package
 	session = scs.New()
 	// we'd like the session to live for a defined range of time
@@ -70,5 +80,7 @@ func run() error {
 	repo := handlers.NewRepo(&app)
 	handlers.NewHandlers(repo)
 	render.NewTemplates(&app)
+	helpers.NewHelpers(&app)
+
 	return nil
 }
