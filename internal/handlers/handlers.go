@@ -94,7 +94,7 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	// instead we use our shiny new function form.Required
 	form.Required("first_name", "last_name", "email")
 	// and some more validators as well :)
-	form.MinLength("first_name", 3, r)
+	form.MinLength("first_name", 3)
 	form.IsEmail("email")
 
 	if !form.Valid() {

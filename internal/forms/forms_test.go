@@ -46,7 +46,7 @@ func TestForm_Has(t *testing.T) {
 	r := httptest.NewRequest("POST", "/whatever", nil)
 	form := New(r.PostForm)
 
-	has := form.Has("whatever", r)
+	has := form.Has("whatever")
 
 	if has {
 		t.Error("form shows has field when it does not")
@@ -57,7 +57,7 @@ func TestForm_Has(t *testing.T) {
 	postedData.Add("a", "a")
 	form = New(postedData)
 
-	has = form.Has("a", r)
+	has = form.Has("a")
 	if !has {
 		t.Error("shows form does not have field when it should")
 	}
@@ -67,16 +67,21 @@ func TestForm_MinLength(t *testing.T) {
 	r := httptest.NewRequest("POST", "/whatever", nil)
 	form := New(r.PostForm)
 
-	form.MinLength("x", 10, r)
+	form.MinLength("x", 10)
 	if form.Valid() {
 		t.Error("form shows min length for non-existent field")
+	}
+
+	isError := form.Errors.Get("x")
+	if isError == "" {
+		t.Error("should have an error, but did not get one")
 	}
 
 	postedValues := url.Values{}
 	postedValues.Add("some_field", "some_value")
 	form = New(postedValues)
 
-	form.MinLength("some_field", 100, r)
+	form.MinLength("some_field", 100)
 	if form.Valid() {
 		t.Error("shows minlength of 100 met when data is shorter")
 	}
@@ -85,15 +90,22 @@ func TestForm_MinLength(t *testing.T) {
 	postedValues.Add("another_field", "abc123")
 	form = New(postedValues)
 
-	form.MinLength("another_field", 1, r)
+	form.MinLength("another_field", 1)
 	if !form.Valid() {
 		t.Error("shows minlength of 1 is not met when it is")
+	}
+
+	// for code coverage with error handling
+	isError = form.Errors.Get("another_field")
+	if isError != "" {
+		t.Error("should not have an error, but got one")
 	}
 }
 
 func TestForm_IsEmail(t *testing.T) {
-	r := httptest.NewRequest("POST", "/whatever", nil)
-	form := New(r.PostForm)
+	// actually we don't require a request, so we can write the previous as:
+	postedValues := url.Values{}
+	form := New(postedValues)
 
 	form.IsEmail("x")
 	if form.Valid() {
@@ -101,7 +113,7 @@ func TestForm_IsEmail(t *testing.T) {
 	}
 
 	// checking for valid email
-	postedValues := url.Values{}
+	postedValues = url.Values{}
 	postedValues.Add("email", "me@example.com")
 	form = New(postedValues)
 

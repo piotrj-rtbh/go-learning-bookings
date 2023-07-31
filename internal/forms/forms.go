@@ -2,7 +2,6 @@ package forms
 
 import (
 	"fmt"
-	"net/http"
 	"net/url"
 	"strings"
 
@@ -39,8 +38,9 @@ func (f *Form) Required(fields ...string) { // may accept any number of strings
 }
 
 // Has checks if form field is in POST and not empty
-func (f *Form) Has(field string, r *http.Request) bool {
+func (f *Form) Has(field string) bool {
 	// x := r.Form.Get(field) // <== that was a hidden error!!!
+	// we don't require r *http.Request anymore!!!
 	x := f.Get(field)
 
 	if x == "" {
@@ -51,7 +51,7 @@ func (f *Form) Has(field string, r *http.Request) bool {
 }
 
 // MinLength checks for string minimum length
-func (f *Form) MinLength(field string, length int, r *http.Request) bool {
+func (f *Form) MinLength(field string, length int) bool {
 	// x := r.Form.Get(field) // <== another hidden error
 	x := f.Get(field)
 	if len(x) < length {
