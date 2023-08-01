@@ -1,0 +1,13 @@
+1. create database.yml according to https://gobuffalo.io/documentation/database/configuration/
+  change db name, passwords etc.
+2. run (https://gobuffalo.io/documentation/database/migrations/#writing-migrations)
+  soda generate fizz CreateUserTable
+3. https://gobuffalo.io/documentation/database/fizz/#create-a-table
+    copy the create table migration to .up. migration
+    and change the fields to match our project
+4. at the rott level of the project run:
+  soda migrate    
+
+Down migration - reverses changes:
+eg. sql("drop table ...")
+
