@@ -8,6 +8,9 @@
 4. at the rott level of the project run:
   soda migrate    
 
-Down migration - reverses changes:
+5. Down migration - reverses changes:
 eg. sql("drop table ...")
+
+6. creating foreign key table
+soda generate fizz CreateFKForReservationsTable
 
