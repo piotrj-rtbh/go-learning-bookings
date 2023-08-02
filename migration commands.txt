@@ -16,3 +16,14 @@ soda generate fizz CreateFKForReservationsTable
 7. creating another FKs: 
 for RoomRestrictions table we have 2 FKs: room_id and restriction_id
 soda generate fizz CreateFKForRoomRestrictions
+8. adding unique index for Users table - on email (we don't want to create multiple users with same email)
+ soda generate fizz CreateUniqueIndexForUsersTable
+
+ For down-migrations - dropping index or a foreign key - we have to look how the indexes are named in the DB:
+ DBweaver: table --> Indexes / Foreign Keys
+
+ 9. adding start_date and end_date as index (for quick lookup) on this pair and other indexes: on room_id and reservation_id
+ soda generate fizz CreateIndexesOnRoomRestrictions
+ 10. We will also index (for fast lookup) by email or last_name in reservations. 
+    And additionally a FK to room_restrictions (reservation_id)
+ soda generate fizz AddFKAndIndicesToReservationsTable
