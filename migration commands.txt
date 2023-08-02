@@ -11,6 +11,8 @@
 5. Down migration - reverses changes:
 eg. sql("drop table ...")
 
-6. creating foreign key table
+6. creating a foreign key table for Reservations (room_id will be the foreign key)
 soda generate fizz CreateFKForReservationsTable
-
+7. creating another FKs: 
+for RoomRestrictions table we have 2 FKs: room_id and restriction_id
+soda generate fizz CreateFKForRoomRestrictions
