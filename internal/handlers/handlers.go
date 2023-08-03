@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/piotrj-rtbh/bookings/internal/config"
 	"github.com/piotrj-rtbh/bookings/internal/driver"
@@ -74,11 +76,35 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Formatting and parsing dates in Go:
+	// https://www.pauladamsmith.com/blog/2011/05/go_time.html
+	sd := r.Form.Get("start_date")
+	ed := r.Form.Get("end_date")
+	// 2020-01-01 -- 01/02 03:04:05PM '06 -0700
+
+	layout := "2006-01-02"
+	startDate, err := time.Parse(layout, sd)
+	if err != nil {
+		helpers.ServerError(w, err)
+	}
+	endDate, err := time.Parse(layout, ed)
+	if err != nil {
+		helpers.ServerError(w, err)
+	}
+
+	roomID, err := strconv.Atoi(r.Form.Get("room_id"))
+	if err != nil {
+		helpers.ServerError(w, err)
+	}
+
 	reservation := models.Reservation{
 		FirstName: r.Form.Get("first_name"),
 		LastName:  r.Form.Get("last_name"),
 		Phone:     r.Form.Get("phone"),
 		Email:     r.Form.Get("email"),
+		StartDate: startDate,
+		EndDate:   endDate,
+		RoomID:    roomID,
 	}
 
 	// now we have to check our data
@@ -105,6 +131,13 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 		// stop processing further
 		return
 	}
+
+	// write the information to the DB
+	err = m.DB.InsertReservation(reservation)
+	if err != nil {
+		helpers.ServerError(w, err)
+	}
+
 	// store the reservation object in the session
 	m.App.Session.Put(r.Context(), "reservation", reservation)
 
