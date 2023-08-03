@@ -7,10 +7,13 @@ import (
 	"net/http"
 
 	"github.com/piotrj-rtbh/bookings/internal/config"
+	"github.com/piotrj-rtbh/bookings/internal/driver"
 	"github.com/piotrj-rtbh/bookings/internal/forms"
 	"github.com/piotrj-rtbh/bookings/internal/helpers"
 	"github.com/piotrj-rtbh/bookings/internal/models"
 	"github.com/piotrj-rtbh/bookings/internal/render"
+	"github.com/piotrj-rtbh/bookings/internal/repository"
+	"github.com/piotrj-rtbh/bookings/internal/repository/dbrepo"
 )
 
 // Repo the repository used by the handlers
@@ -19,12 +22,14 @@ var Repo *Repository
 // Repository is the repository type
 type Repository struct {
 	App *config.AppConfig
+	DB  repository.DatabaseRepo
 }
 
 // NewRepo creates a new repository
-func NewRepo(a *config.AppConfig) *Repository {
+func NewRepo(a *config.AppConfig, db *driver.DB) *Repository {
 	return &Repository{
 		App: a,
+		DB:  dbrepo.NewPostgresRepo(db.SQL, a),
 	}
 }
 

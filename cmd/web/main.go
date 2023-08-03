@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/piotrj-rtbh/bookings/internal/config"
+	"github.com/piotrj-rtbh/bookings/internal/driver"
 	"github.com/piotrj-rtbh/bookings/internal/handlers"
 	"github.com/piotrj-rtbh/bookings/internal/helpers"
 	"github.com/piotrj-rtbh/bookings/internal/models"
@@ -26,10 +27,12 @@ var errorLog *log.Logger
 
 // main is the main function
 func main() {
-	err := run()
+	db, err := run()
 	if err != nil {
 		log.Fatal(err)
 	}
+	// we're closing connection only when main() stops running!
+	defer db.SQL.Close()
 
 	fmt.Println(fmt.Sprintf("Staring application on port %s", portNumber))
 	// _ = http.ListenAndServe(portNumber, nil)
@@ -43,7 +46,7 @@ func main() {
 	log.Fatal(err)
 }
 
-func run() error {
+func run() (*driver.DB, error) {
 	// what am I going to put in the session?
 	gob.Register(models.Reservation{})
 
@@ -68,19 +71,29 @@ func run() error {
 	// store this session in globally accessible app (from config.go)
 	app.Session = session
 
+	// connect to database
+	log.Println("Connecting to database...")
+	db, err := driver.ConnectSQL("host=localhost port=5432 dbname=bookings user=postgres password=postgres")
+	if err != nil {
+		log.Fatal("Cannot connect to database! Dying...")
+	}
+
+	// defer db.SQL.Close() // we can't have closing here because run() is called from main() and once run() finishes the DB conn will be closed
+
 	tc, err := render.CreateTemplateCache()
 	if err != nil {
 		log.Fatal("cannot create template cache")
-		return err
+		return nil, err
 	}
 
 	app.TemplateCache = tc
 	app.UseCache = false
 
-	repo := handlers.NewRepo(&app)
+	// we also MUST allow the db connection to be accessible by handlers
+	repo := handlers.NewRepo(&app, db)
 	handlers.NewHandlers(repo)
 	render.NewTemplates(&app)
 	helpers.NewHelpers(&app)
 
-	return nil
+	return db, nil
 }
