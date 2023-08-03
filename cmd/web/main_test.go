@@ -9,7 +9,7 @@ import "testing"
 // 		go test -coverprofile=coverage.out && go tool cover -html=coverage.out
 
 func TestRun(t *testing.T) {
-	err := run()
+	_, err := run()
 	if err != nil {
 		t.Error("failed run()")
 	}
