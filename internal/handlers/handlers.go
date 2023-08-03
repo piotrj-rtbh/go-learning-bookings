@@ -138,6 +138,8 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 		helpers.ServerError(w, err)
 	}
 
+	// we have to put room restrictions as well!
+
 	// store the reservation object in the session
 	m.App.Session.Put(r.Context(), "reservation", reservation)
 

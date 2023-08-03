@@ -22,7 +22,8 @@ func (m *postgresDBRepo) InsertReservation(res models.Reservation) error {
 
 	stmt := `insert into reservations (first_name, last_name, email, phone, start_date, 
 					 end_date, room_id, created_at, updated_at)
-					 values ($1, $2, $3, $4, $5, $6, $7, $8, $9)`
+					 values ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+					 returning id` // returning id gives us the id after insertion to DB (that's postgres specific!)
 
 	// there is m.DB.Exec(stmt, params...) but with context version we assure we timeout
 	// the connection when something wrong happens
