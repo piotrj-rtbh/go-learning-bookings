@@ -1,6 +1,8 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
 // Reservation holds reservation data
 // not actual
@@ -67,4 +69,12 @@ type RoomRestriction struct {
 	Room          Room        // additional field which will help us with handling the Room associated with this room restriction
 	Reservation   Reservation // additional field which will help us with handling the Reservation associated with this room restriction
 	Restriction   Restriction // additional field which will help us with handling the Restriction associated with this room restriction
+}
+
+// MailData holds an email message
+type MailData struct {
+	To      string
+	From    string
+	Subject string
+	Content string // we thought it could be better to use template.HTML type but string is even simpler
 }

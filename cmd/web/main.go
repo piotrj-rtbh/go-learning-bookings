@@ -33,6 +33,30 @@ func main() {
 	}
 	// we're closing connection only when main() stops running!
 	defer db.SQL.Close()
+	// close mail channel only after main() stops running
+	defer close(app.MailChan)
+
+	fmt.Println("Starting mail listener...")
+	listenForMail()
+
+	/*
+		// Just for testing email sending works
+		msg := models.MailData{
+			To:      "john@do.ca",
+			From:    "me@here.com",
+			Subject: "Some subject",
+			Content: "",
+		}
+		app.MailChan <- msg
+	*/
+
+	// sending an email example (does not work now)
+	/* from := "me@here.com"
+	auth := smtp.PlainAuth("", from, "", "localhost")
+	err = smtp.SendMail("localhost:1025", auth, from, []string{"you@there.com"}, []byte("Hello, world"))
+	if err != nil {
+		log.Println(err)
+	} */
 
 	fmt.Println(fmt.Sprintf("Staring application on port %s", portNumber))
 	// _ = http.ListenAndServe(portNumber, nil)
@@ -52,6 +76,10 @@ func run() (*driver.DB, error) {
 	gob.Register(models.User{})
 	gob.Register(models.Room{})
 	gob.Register(models.Restriction{})
+
+	// creating mail channel - ideal tool for sending emails from the app (it's async)
+	mailChan := make(chan models.MailData)
+	app.MailChan = mailChan
 
 	// change this to true when in production
 	app.InProduction = false
