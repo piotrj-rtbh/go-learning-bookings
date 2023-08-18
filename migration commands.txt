@@ -27,3 +27,8 @@ soda generate fizz CreateFKForRoomRestrictions
  10. We will also index (for fast lookup) by email or last_name in reservations. 
     And additionally a FK to room_restrictions (reservation_id)
  soda generate fizz AddFKAndIndicesToReservationsTable
+ 11. Changing column room_restrictions.reservation_id to allow nulls
+  soda generate fizz AddNotNullToReservationIDForRestrictions
+ 12. Seeding data migrations for Rooms and Restrictions:
+ soda generate sql SeedRoomsTable
+ soda generate sql SeedRestrictionsTable
