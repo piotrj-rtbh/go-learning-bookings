@@ -73,8 +73,9 @@ type RoomRestriction struct {
 
 // MailData holds an email message
 type MailData struct {
-	To      string
-	From    string
-	Subject string
-	Content string // we thought it could be better to use template.HTML type but string is even simpler
+	To       string
+	From     string
+	Subject  string
+	Content  string // we thought it could be better to use template.HTML type but string is even simpler
+	Template string
 }

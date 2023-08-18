@@ -1,7 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"os"
+	"strings"
 	"time"
 
 	"github.com/piotrj-rtbh/bookings/internal/models"
@@ -37,8 +40,21 @@ func sendMsg(m models.MailData) {
 
 	email := mail.NewMSG()
 	email.SetFrom(m.From).AddTo(m.To).SetSubject(m.Subject)
+	// has Template been specified?
+	if m.Template == "" {
+		email.SetBody(mail.TextHTML, m.Content)
+	} else {
+		data, err := os.ReadFile(fmt.Sprintf("./email-templates/%s", m.Template))
+		if err != nil {
+			app.ErrorLog.Println(err)
+		}
+
+		mailTemplate := string(data)
+		msgToSend := strings.Replace(mailTemplate, "[%body%]", m.Content, 1)
+		email.SetBody(mail.TextHTML, msgToSend)
+	}
+
 	// email.SetBody(mail.TextHTML, "Hello, <strong>world</strong>!")
-	email.SetBody(mail.TextHTML, m.Content)
 	err = email.Send(client)
 	if err != nil {
 		log.Println(err)
