@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"testing"
 	"time"
 
 	"github.com/alexedwards/scs/v2"
@@ -24,8 +25,7 @@ var session *scs.SessionManager
 var pathToTemplates = "./../../templates"
 var functions = template.FuncMap{}
 
-func getRoutes() http.Handler {
-
+func TestMain(m *testing.M) {
 	// copy of main.go
 	gob.Register(models.Reservation{})
 
@@ -65,6 +65,10 @@ func getRoutes() http.Handler {
 	NewHandlers(repo)
 	render.NewRenderer(&app)
 
+	os.Exit(m.Run())
+}
+
+func getRoutes() http.Handler {
 	// copy of func routes() from routes.go
 	mux := chi.NewRouter()
 	mux.Use(middleware.Recoverer) // prevents from panic errors! middleware comes from chi
