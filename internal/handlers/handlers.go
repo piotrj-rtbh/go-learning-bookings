@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"errors"
 	"log"
 	"net/http"
 	"strconv"
@@ -106,7 +105,9 @@ func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
 func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	reservation, ok := m.App.Session.Get(r.Context(), "reservation").(models.Reservation)
 	if !ok {
-		helpers.ServerError(w, errors.New("can't get from session"))
+		// helpers.ServerError(w, errors.New("can't get from session"))
+		m.App.Session.Put(r.Context(), "error", "cannot get the reservation from session")
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
 	}
 
@@ -115,7 +116,8 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	// when trying to /make-reservation
 	if err != nil {
 		// log.Println(err) // <-- replace with our error handling package now!
-		helpers.ServerError(w, err)
+		m.App.Session.Put(r.Context(), "error", "can't parse form!")
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
 	}
 
@@ -184,7 +186,8 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	// write the information to the DB
 	newReservationID, err := m.DB.InsertReservation(reservation)
 	if err != nil {
-		helpers.ServerError(w, err)
+		m.App.Session.Put(r.Context(), "error", "can't insert reservation into DB")
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
 	}
 
@@ -199,7 +202,9 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 
 	err = m.DB.InsertRoomRestriction(restriction)
 	if err != nil {
-		helpers.ServerError(w, err)
+		// helpers.ServerError(w, err)
+		m.App.Session.Put(r.Context(), "error", "can't insert room restriction")
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
 	}
 
