@@ -1,1 +1,4 @@
 https://github.com/mailhog/MailHog
+Running mailhog from Windows:
+Just dbl click the file: https://github.com/mailhog/MailHog/releases/download/v1.0.0/MailHog_windows_amd64.exe
+Client: localhost:8025
