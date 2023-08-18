@@ -61,7 +61,7 @@ func getRoutes() http.Handler {
 	// https://www.udemy.com/course/building-modern-web-applications-with-go/learn/lecture/23069034 9:40
 	app.UseCache = true
 
-	repo := NewRepo(&app)
+	repo := NewTestRepo(&app)
 	NewHandlers(repo)
 	render.NewRenderer(&app)
 
