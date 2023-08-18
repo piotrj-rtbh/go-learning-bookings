@@ -303,6 +303,21 @@ type jsonResponse struct {
 
 // AvailabilityJSON handles request for availability and send JSON response
 func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
+	// need to parse reqquest body
+	err := r.ParseForm()
+	if err != nil {
+		// can't parse form, so return appropriate json
+		resp := jsonResponse{
+			OK:      false,
+			Message: "Intenral server error",
+		}
+
+		out, _ := json.MarshalIndent(resp, "", "     ")
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(out)
+		return
+	}
+
 	sd := r.Form.Get("start")
 	ed := r.Form.Get("end")
 
@@ -312,7 +327,20 @@ func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
 
 	roomID, _ := strconv.Atoi(r.Form.Get("room_id"))
 
-	available, _ := m.DB.SearchAvailabilityByDatesByRoomID(startDate, endDate, roomID)
+	available, err := m.DB.SearchAvailabilityByDatesByRoomID(startDate, endDate, roomID)
+	if err != nil {
+		// can't parse form, so return appropriate json
+		resp := jsonResponse{
+			OK:      false,
+			Message: "Error connecting to database",
+		}
+
+		out, _ := json.MarshalIndent(resp, "", "     ")
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(out)
+		return
+	}
+
 	resp := jsonResponse{
 		OK:        available,
 		Message:   "",
@@ -321,12 +349,13 @@ func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
 		RoomID:    strconv.Itoa(roomID),
 	}
 	// create JSON string to be written out - marshalling a struct into a string containing JSON
-	out, err := json.MarshalIndent(resp, "", "     ")
-	if err != nil {
-		// log.Println(err)
-		helpers.ServerError(w, err)
-		return
-	}
+	// removed the error check since we handle all aspects of the json right here
+	out, _ := json.MarshalIndent(resp, "", "     ")
+	// if err != nil {
+	// 	// log.Println(err)
+	// 	helpers.ServerError(w, err)
+	// 	return
+	// }
 
 	// just to monitor what's sent
 	log.Println(string(out))
