@@ -64,7 +64,8 @@
         const elem = document.getElementById('reservation-dates-modal');
         const rp = new DateRangePicker(elem, {
           format: 'yyyy-mm-dd',
-          showOnFocus: true
+          showOnFocus: true,
+          minDate: new Date(),
         })
       },
       didOpen: () => {
@@ -80,6 +81,7 @@
         const formData = new FormData(form); // create form data of this form
         // we have to add the csrf_token here because it's not in the above form (we could add it there but there's another way)
         formData.append("csrf_token", "{{.CSRFToken}}");
+        formData.append("room_id", "1");
 
         // perform JSON request with POST (we change the method in routes as well)
         fetch('/search-availability-json', {
@@ -88,9 +90,11 @@
         })
           .then(response => response.json())
           .then(data => {
-            console.log(data)
-            console.log(data.ok)
-            console.log(data.message)
+            if (data.ok) {
+              console.log("room is available")
+            } else {
+              console.log("room is not available")
+            }
           });
       }
     });
