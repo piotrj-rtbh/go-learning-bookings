@@ -1,0 +1,15 @@
+To get aliases working in Powershell you can use a function inside of your Powershell profile. 
+I like the new Windows Terminal so that is what I am using in the pictures.
+
+If you execute $Profile in your terminal you will get the location of your Powershell profile.
+> $Profile
+C:\Users\Piotr Jaworski\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1
+
+You need to edit that file and append the following(you can change the function name to whatever you like):
+
+function coverage {
+    go test -coverprofile coverage.out 
+    go tool cover -html coverage.out
+}
+
+You then need to restart your terminal and then you can run the alias!
