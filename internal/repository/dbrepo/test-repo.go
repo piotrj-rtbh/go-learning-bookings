@@ -8,8 +8,6 @@ import (
 	"github.com/piotrj-rtbh/bookings/internal/models"
 )
 
-// we'll create any function that will be available to the interface repository.DatabaseRepo
-
 func (m *testDBRepo) AllUsers() bool {
 	return true
 }
@@ -31,7 +29,7 @@ func (m *testDBRepo) InsertRoomRestriction(r models.RoomRestriction) error {
 	return nil
 }
 
-// SearchAvailabilityByDatesByRoomID returns true if availability exists for roomID, and  false if no availability
+// SearchAvailabilityByDatesByRoomID returns true if availability exists for roomID, and false if no availability
 func (m *testDBRepo) SearchAvailabilityByDatesByRoomID(start, end time.Time, roomID int) (bool, error) {
 	// set up a test time
 	layout := "2006-01-02"
@@ -47,7 +45,7 @@ func (m *testDBRepo) SearchAvailabilityByDatesByRoomID(start, end time.Time, roo
 		log.Println(err)
 	}
 
-	if start.String() == testDateToFail.String() {
+	if start == testDateToFail {
 		return false, errors.New("some error")
 	}
 
@@ -61,7 +59,7 @@ func (m *testDBRepo) SearchAvailabilityByDatesByRoomID(start, end time.Time, roo
 	return true, nil
 }
 
-// SearchAvailabilityForAllRooms returns a slice if available rooms, if any, for given date range
+// SearchAvailabilityForAllRooms returns a slice of available rooms, if any, for given date range
 func (m *testDBRepo) SearchAvailabilityForAllRooms(start, end time.Time) ([]models.Room, error) {
 	var rooms []models.Room
 
@@ -101,22 +99,7 @@ func (m *testDBRepo) SearchAvailabilityForAllRooms(start, end time.Time) ([]mode
 func (m *testDBRepo) GetRoomByID(id int) (models.Room, error) {
 	var room models.Room
 	if id > 2 {
-		return room, errors.New("Some error")
+		return room, errors.New("some error")
 	}
 	return room, nil
-}
-
-func (m *testDBRepo) GetUserByID(id int) (models.User, error) {
-
-	return models.User{}, nil
-}
-
-func (m *testDBRepo) UpdateUser(u models.User) error {
-
-	return nil
-}
-
-func (m *testDBRepo) Authenticate(email, password string) (int, string, error) {
-
-	return 0, "", nil
 }
