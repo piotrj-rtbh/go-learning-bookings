@@ -49,6 +49,7 @@ func routes(app *config.AppConfig) http.Handler {
 
 	mux.Get("/user/login", handlers.Repo.ShowLogin)
 	mux.Post("/user/login", handlers.Repo.PostShowLogin)
+	mux.Get("/user/logout", handlers.Repo.Logout)
 
 	// in order to enable images loading we have to run a file server
 	fileServer := http.FileServer(http.Dir("./static/"))
