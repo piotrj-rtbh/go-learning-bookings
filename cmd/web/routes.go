@@ -57,7 +57,7 @@ func routes(app *config.AppConfig) http.Handler {
 
 	// anything starting with /admin will be handled by this func which requires authentication:
 	mux.Route("/admin", func(mux chi.Router) {
-		mux.Use(Auth)
+		// mux.Use(Auth)
 		// internal path, so it will be /admin/dashboard
 		mux.Get("/dashboard", handlers.Repo.AdminDashboard)
 
