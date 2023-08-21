@@ -55,5 +55,12 @@ func routes(app *config.AppConfig) http.Handler {
 	fileServer := http.FileServer(http.Dir("./static/"))
 	mux.Handle("/static/*", http.StripPrefix("/static", fileServer))
 
+	// anything starting with /admin will be handled by this func which requires authentication:
+	mux.Route("/admin", func(mux chi.Router) {
+		mux.Use(Auth)
+		// internal path, so it will be /admin/dashboard
+		mux.Get("/dashboard", handlers.Repo.AdminDashboard)
+	})
+
 	return mux
 }
