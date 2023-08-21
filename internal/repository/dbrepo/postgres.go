@@ -239,6 +239,7 @@ func (m *postgresDBRepo) Authenticate(email, testPassword string) (int, string, 
 		return id, "", err
 	}
 
+	// for encrypting passwords use this Go tool: https://go.dev/play/p/uKMMCzJWGsW
 	err = bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(testPassword))
 	if err == bcrypt.ErrMismatchedHashAndPassword {
 		return 0, "", errors.New("incorrect password")
