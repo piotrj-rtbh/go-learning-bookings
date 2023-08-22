@@ -89,12 +89,12 @@ async function custom(c) {
               c.didOpen();
           }
       },
-      preConfirm: () => {
+      /* preConfirm: () => {
           return [
               document.getElementById('start').value,
               document.getElementById('end').value
           ]
-      }
+      } */
   })
 
   // if we have the result
