@@ -5,7 +5,7 @@
 3. https://gobuffalo.io/documentation/database/fizz/#create-a-table
     copy the create table migration to .up. migration
     and change the fields to match our project
-4. at the rott level of the project run:
+4. at the root level of the project run:
   soda migrate    
 
 5. Down migration - reverses changes:
@@ -32,3 +32,6 @@ soda generate fizz CreateFKForRoomRestrictions
  12. Seeding data migrations for Rooms and Restrictions:
  soda generate sql SeedRoomsTable
  soda generate sql SeedRestrictionsTable
+
+ 13. Add processed column to reservations:
+ soda generate fizz AddProcessedToReservationsTable
