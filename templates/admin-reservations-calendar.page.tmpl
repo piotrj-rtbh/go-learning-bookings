@@ -6,6 +6,23 @@
 
 {{define "content"}}
   <div class="col-md-12">
-    Reservation calendar content
+    <div class="text-center">
+      <h3>
+      {{index .StringMap "this_month"}} {{index .StringMap "this_month_year"}}
+      </h3>
+    </div>
+    <div class="float-left">
+      <a class="btn btn-sm btn-outline-secondary"
+       href="/admin/reservations-calendar?y={{index .StringMap "last_month_year"}}&m={{index .StringMap "last_month"}}">
+        &Lt;
+      </a>
+    </div>
+    <div class="float-right">
+      <a class="btn btn-sm btn-outline-secondary"
+       href="/admin/reservations-calendar?y={{index .StringMap "next_month_year"}}&m={{index .StringMap "next_month"}}">
+        &Gt;
+      </a>
+    </div>
+    <div class="clearfix"></div>
   </div>
 {{end}}
