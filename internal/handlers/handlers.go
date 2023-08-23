@@ -674,8 +674,8 @@ func (m *Repository) AdminReservationsCalendar(w http.ResponseWriter, r *http.Re
 
 		// initialize res/block maps
 		for d := firstOfMonth; d.After(lastOfMonth) == false; d = d.AddDate(0, 0, 1) {
-			reservationMap[d.Format("2006-01-2")] = 0
-			blockMap[d.Format("2006-01-2")] = 0
+			reservationMap[d.Format("2006-01-02")] = 0
+			blockMap[d.Format("2006-01-02")] = 0
 		}
 
 		// get all the restrictions for current room
@@ -689,12 +689,12 @@ func (m *Repository) AdminReservationsCalendar(w http.ResponseWriter, r *http.Re
 			if y.ReservationID > 0 {
 				// it's a reservation
 				for d := y.StartDate; d.After(y.EndDate) == false; d = d.AddDate(0, 0, 1) {
-					reservationMap[d.Format("2006-01-2")] = y.ReservationID
+					reservationMap[d.Format("2006-01-02")] = y.ReservationID
 				}
 			} else {
 				// it's a block
 				// blocks are 1-day long!
-				blockMap[y.StartDate.Format("2006-01-2")] = y.ID
+				blockMap[y.StartDate.Format("2006-01-02")] = y.ID
 			}
 		}
 
@@ -806,7 +806,11 @@ func (m *Repository) AdminPostReservationsCalendar(w http.ResponseWriter, r *htt
 				if val > 0 {
 					if !form.Has(fmt.Sprintf("remove_block_%d_%s", x.ID, name)) {
 						// delete the restriction by ID
-						log.Println("would delete block", value)
+						// log.Println("would delete block", value)
+						err := m.DB.DeleteBlockByID(value)
+						if err != nil {
+							log.Println(err)
+						}
 					}
 				}
 			}
@@ -820,8 +824,13 @@ func (m *Repository) AdminPostReservationsCalendar(w http.ResponseWriter, r *htt
 		if strings.HasPrefix(name, "add_block") {
 			exploded := strings.Split(name, "_") // add_block_2_2023-08-23
 			roomID, _ := strconv.Atoi(exploded[2])
+			t, _ := time.Parse("2006-01-02", exploded[3])
 			// insert a new block
-			log.Println("Would insert block for room id", roomID, "for date", exploded[3])
+			log.Println("Would insert block for room id", roomID, "for date", exploded[3], t)
+			err := m.DB.InsertBlockForRoom(roomID, t)
+			if err != nil {
+				log.Println(err)
+			}
 		}
 	}
 
