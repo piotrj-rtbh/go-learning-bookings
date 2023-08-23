@@ -667,6 +667,46 @@ func (m *Repository) AdminReservationsCalendar(w http.ResponseWriter, r *http.Re
 
 	data["rooms"] = rooms
 
+	for _, x := range rooms {
+		// create maps
+		reservationMap := make(map[string]int)
+		blockMap := make(map[string]int)
+
+		// initialize res/block maps
+		for d := firstOfMonth; d.After(lastOfMonth) == false; d = d.AddDate(0, 0, 1) {
+			reservationMap[d.Format("2006 01 2")] = 0
+			blockMap[d.Format("2006 01 2")] = 0
+		}
+
+		// get all the restrictions for current room
+		restrictions, err := m.DB.GetRestrictionsForRoomByDate(x.ID, firstOfMonth, lastOfMonth)
+		if err != nil {
+			helpers.ServerError(w, err)
+			return
+		}
+
+		for _, y := range restrictions {
+			if y.ReservationID > 0 {
+				// it's a reservation
+				for d := y.StartDate; d.After(y.EndDate); d = d.AddDate(0, 0, 1) {
+					reservationMap[d.Format("2006 01 2")] = y.ReservationID
+				}
+			} else {
+				// it's a block
+				blockMap[y.StartDate.Format("2006 01 2")] = y.RestrictionID
+			}
+		}
+
+		data[fmt.Sprintf("reservation_map_%d", x.ID)] = reservationMap // one reservation map for every room
+		data[fmt.Sprintf("block_map_%d", x.ID)] = blockMap             // one block map for every room
+
+		// store the block map for this room in the session
+		// this is to save the state before the user does anything to the reservation calendar
+		// reason: to compare what we currently have (what user did) with what we used to have
+		// example: which block we got rid of and which blocks are new
+		m.App.Session.Put(r.Context(), fmt.Sprintf("block_map_%d", x.ID), blockMap)
+	}
+
 	render.Template(w, r, "admin-reservations-calendar.page.tmpl", &models.TemplateData{
 		StringMap: stringMap,
 		Data:      data,

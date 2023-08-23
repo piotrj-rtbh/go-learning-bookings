@@ -76,6 +76,7 @@ func run() (*driver.DB, error) {
 	gob.Register(models.User{})
 	gob.Register(models.Room{})
 	gob.Register(models.Restriction{})
+	gob.Register(map[string]int{}) // we store the block maps in session as well
 
 	// creating mail channel - ideal tool for sending emails from the app (it's async)
 	mailChan := make(chan models.MailData)
