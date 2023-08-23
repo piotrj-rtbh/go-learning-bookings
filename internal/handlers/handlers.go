@@ -784,7 +784,46 @@ func (m *Repository) AdminPostReservationsCalendar(w http.ResponseWriter, r *htt
 	month, _ := strconv.Atoi(r.Form.Get("m"))
 
 	// process blocks
-	// todo
+	rooms, err := m.DB.AllRooms()
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	form := forms.New(r.PostForm)
+
+	for _, x := range rooms {
+		// Get the block map from the session (before user changed anything)
+		// Loop through entire map, if we have an entry in the  map that does not exist
+		// in our posted data and if the restriction id > 0 then it is a block
+		// we need to remove
+		curMap := m.App.Session.Get(r.Context(), fmt.Sprintf("block_map_%d", x.ID)).(map[string]int)
+		for name, value := range curMap {
+			// variable ok will be false if the value is not in the map
+			if val, ok := curMap[name]; ok {
+				// only pay attention to values > 0 and that are not in the form post
+				// the rest are just placeholders for days without blocks
+				if val > 0 {
+					if !form.Has(fmt.Sprintf("remove_block_%d_%s", x.ID, name)) {
+						// delete the restriction by ID
+						log.Println("would delete block", value)
+					}
+				}
+			}
+		}
+	}
+
+	// now handle new blocks
+	for name, _ := range r.PostForm {
+		// log.Println("Form has name", name)
+		// if the name of the checkbox start with add_block
+		if strings.HasPrefix(name, "add_block") {
+			exploded := strings.Split(name, "_") // add_block_2_2023-08-23
+			roomID, _ := strconv.Atoi(exploded[2])
+			// insert a new block
+			log.Println("Would insert block for room id", roomID, "for date", exploded[3])
+		}
+	}
 
 	m.App.Session.Put(r.Context(), "flash", "Changes saved")
 	http.Redirect(w, r, fmt.Sprintf("/admin/reservations-calendar?y=%d&m=%d", year, month), http.StatusSeeOther)
