@@ -105,7 +105,7 @@ func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
 
 // PostReservation handles the posting of a reservation form
 func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
-	reservation, ok := m.App.Session.Get(r.Context(), "reservation").(models.Reservation)
+	res, ok := m.App.Session.Get(r.Context(), "reservation").(models.Reservation)
 	if !ok {
 		// helpers.ServerError(w, errors.New("can't get from session"))
 		m.App.Session.Put(r.Context(), "error", "cannot get the reservation from session")
@@ -129,38 +129,55 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	// ed := r.Form.Get("end_date")
 	// 2020-01-01 -- 01/02 03:04:05PM '06 -0700
 
-	// layout := "2006-01-02"
-	// startDate, err := time.Parse(layout, sd)
-	// if err != nil {
-	// 	helpers.ServerError(w, err)
-	// }
-	// endDate, err := time.Parse(layout, ed)
-	// if err != nil {
-	// 	helpers.ServerError(w, err)
-	// 	return
-	// }
+	sd := res.StartDate.Format("2006-01-02")
+	ed := res.EndDate.Format("2006-01-02")
 
-	// roomID, err := strconv.Atoi(r.Form.Get("room_id"))
-	// if err != nil {
-	// 	helpers.ServerError(w, err)
-	// 	return
-	// }
+	stringMap := make(map[string]string)
+	stringMap["start_date"] = sd
+	stringMap["end_date"] = ed
 
-	reservation.FirstName = r.Form.Get("first_name")
-	reservation.LastName = r.Form.Get("last_name")
-	reservation.Phone = r.Form.Get("phone")
-	reservation.Email = r.Form.Get("email")
-	// reservation := models.Reservation{
-	// 	FirstName: r.Form.Get("first_name"),
-	// 	LastName:  r.Form.Get("last_name"),
-	// 	Phone:     r.Form.Get("phone"),
-	// 	Email:     r.Form.Get("email"),
-	// 	StartDate: startDate,
-	// 	EndDate:   endDate,
-	// 	RoomID:    roomID,
-	// }
+	layout := "2006-01-02"
+	startDate, err := time.Parse(layout, sd)
+	if err != nil {
+		// helpers.ServerError(w, err)
+		m.App.Session.Put(r.Context(), "error", "can't parse start date")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+	endDate, err := time.Parse(layout, ed)
+	if err != nil {
+		// helpers.ServerError(w, err)
+		m.App.Session.Put(r.Context(), "error", "can't parse end date")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
 
-	// now we have to check our data
+	roomID, err := strconv.Atoi(r.Form.Get("room_id"))
+	if err != nil {
+		// helpers.ServerError(w, err)
+		m.App.Session.Put(r.Context(), "error", "invalid data!")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	room, err := m.DB.GetRoomByID(roomID)
+	if err != nil {
+		m.App.Session.Put(r.Context(), "error", "invalid data!")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	reservation := models.Reservation{
+		FirstName: r.Form.Get("first_name"),
+		LastName:  r.Form.Get("last_name"),
+		Phone:     r.Form.Get("phone"),
+		Email:     r.Form.Get("email"),
+		StartDate: startDate,
+		EndDate:   endDate,
+		RoomID:    roomID,
+		Room:      room,
+	}
+
 	form := forms.New(r.PostForm) // r.PostForm is accessible only after ParseForm has been called
 
 	//form.Has("first_name", r) // adds errors if failed
@@ -178,8 +195,9 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 		// now render the form
 		render.Template(w, r, "make-reservation.page.tmpl", &models.TemplateData{
 			// for GET we make the Form object be empty
-			Form: form,
-			Data: data,
+			Form:      form,
+			Data:      data,
+			StringMap: stringMap,
 		})
 		// stop processing further
 		return
