@@ -9,6 +9,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/joho/godotenv"
 	"github.com/piotrj-rtbh/bookings/internal/config"
 	"github.com/piotrj-rtbh/bookings/internal/driver"
 	"github.com/piotrj-rtbh/bookings/internal/handlers"
@@ -28,6 +29,11 @@ var errorLog *log.Logger
 
 // main is the main function
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	db, err := run()
 	if err != nil {
 		log.Fatal(err)
@@ -80,18 +86,18 @@ func run() (*driver.DB, error) {
 	gob.Register(map[string]int{}) // we store the block maps in session as well
 
 	// read flags
-	inProduction := flag.Bool("production", true, "Application is in production")
-	useCache := flag.Bool("cache", true, "Use template cache")
-	dbHost := flag.String("dbhost", "localhost", "Database host")
-	dbName := flag.String("dbname", "", "Database name")
-	dbUser := flag.String("dbuser", "", "Database user")
-	dbPass := flag.String("dbpass", "", "Database password")
-	dbPort := flag.String("dbport", "5432", "Database port")
-	dbSSL := flag.String("dbssl", "disable", "Database ssl settings (disable, prefer, require)")
+	inProduction := os.Getenv("PRODUCTION")
+	useCache := os.Getenv("CACHE")
+	dbHost := os.Getenv("DBHOST")
+	dbName := os.Getenv("DBNAME")
+	dbUser := os.Getenv("DBUSER")
+	dbPass := os.Getenv("PASSWORD")
+	dbPort := os.Getenv("DBPORT")
+	dbSSL := os.Getenv("DBSSL")
 
 	flag.Parse()
 
-	if *dbName == "" || *dbUser == "" {
+	if dbName == "" || dbUser == "" {
 		fmt.Println("Missing required flags")
 		os.Exit(1)
 	}
@@ -101,8 +107,8 @@ func run() (*driver.DB, error) {
 	app.MailChan = mailChan
 
 	// change this to true when in production
-	app.InProduction = *inProduction
-	app.UseCache = *useCache
+	app.InProduction = inProduction == "true"
+	app.UseCache = useCache == "true"
 
 	infoLog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	app.InfoLog = infoLog
@@ -124,7 +130,8 @@ func run() (*driver.DB, error) {
 
 	// connect to database
 	log.Println("Connecting to database...")
-	connectionString := fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s sslmode=%s", *dbHost, *dbPort, *dbName, *dbUser, *dbPass, *dbSSL)
+	connectionString := fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s sslmode=%s",
+		dbHost, dbPort, dbName, dbUser, dbPass, dbSSL)
 	// db, err := driver.ConnectSQL("host=localhost port=5432 dbname=bookings user=postgres password=postgres")
 	db, err := driver.ConnectSQL(connectionString)
 	if err != nil {
