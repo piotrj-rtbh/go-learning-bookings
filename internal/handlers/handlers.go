@@ -69,7 +69,7 @@ func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		// helpers.ServerError(w, errors.New("cannot get reservation from session"))
 		m.App.Session.Put(r.Context(), "error", "can't get reservation from session")
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
@@ -77,7 +77,7 @@ func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		// helpers.ServerError(w, err)
 		m.App.Session.Put(r.Context(), "error", "can't find room!")
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
@@ -109,7 +109,7 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		// helpers.ServerError(w, errors.New("can't get from session"))
 		m.App.Session.Put(r.Context(), "error", "cannot get the reservation from session")
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
@@ -119,7 +119,7 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		// log.Println(err) // <-- replace with our error handling package now!
 		m.App.Session.Put(r.Context(), "error", "can't parse form!")
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
@@ -189,7 +189,7 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	newReservationID, err := m.DB.InsertReservation(reservation)
 	if err != nil {
 		m.App.Session.Put(r.Context(), "error", "can't insert reservation into DB")
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
@@ -206,7 +206,7 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		// helpers.ServerError(w, err)
 		m.App.Session.Put(r.Context(), "error", "can't insert room restriction")
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
@@ -396,7 +396,7 @@ func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
 	// }
 
 	// just to monitor what's sent
-	log.Println(string(out))
+	// log.Println(string(out))
 
 	// write headers
 	w.Header().Set("Content-Type", "application/json")
@@ -417,7 +417,7 @@ func (m *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) 
 		m.App.ErrorLog.Println("Can't get error from session")
 		// pass a value into session:
 		m.App.Session.Put(r.Context(), "error", "Can't get reservation from session")
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 		// we also need the error to be displayed
 
 		return
