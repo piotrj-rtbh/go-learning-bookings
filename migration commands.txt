@@ -35,3 +35,9 @@ soda generate fizz CreateFKForRoomRestrictions
 
  13. Add processed column to reservations:
  soda generate fizz AddProcessedToReservationsTable
+
+ Seeding tables:
+ soda generate sql AddUserToUserTable
+ (copy rows as INSERT from users table, delete the rows)
+ soda migrate - should insert the user rows
+
