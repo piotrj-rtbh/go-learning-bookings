@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>My nic page</title>
+    <title>Fort Szczyrk Bed and Breakfast</title>
 
     <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
         integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous"> -->
@@ -22,7 +22,7 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-          <a class="navbar-brand" href="#">Navbar</a>
+          <a class="navbar-brand" href="#">&nbsp;</a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
@@ -53,13 +53,13 @@
                 {{if eq .IsAuthenticated 1}}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        data-bs-toggle="dropdown" aria-expanded="false">
                         Admin
                     </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="/admin/dashboard">Dashboard</a>
-                        <a class="dropdown-item" href="/user/logout">Logout</a>
-                    </div>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="/admin/dashboard">Dashboard</a></li>
+                        <li><a class="dropdown-item" href="/user/logout">Logout</a></li>
+                    </ul>
                 </li>
                 {{else}}
                 <a class="nav-link" href="/user/login">Login</a>
@@ -74,21 +74,22 @@
 
     {{end}}
 
-    <div class="row my-footer">
+    <footer class="row my-footer">
         <div class="col text-center">
-            Fort Szczyrk Bed & Breakfast<br>
+            <strong>Fort Szczyrk Bed &amp; Breakfast</strong><br>
             ul. Beskidzka 456<br>
             43-370 Szczyrk<br>
             Poland<br>
-            phone: +48 33 987-654-321 
+            phone: +48 33 987-654-321<br>
+            <a href="mailto:info@fortszczyrkbb.com">info@fortszczyrkbb.com</a>
         </div>
         <div class="col text-center">
             
         </div>
         <div class="col text-center">
-            Your home away<br>from home
+            <strong>Your home away<br>from home</strong>
         </div>
-    </div>
+    </footer>
 
     <!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
         integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
